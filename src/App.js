@@ -3,27 +3,42 @@ import logo from "./logo.svg";
 import "./App.css";
 
 class ErrorWrap extends Component {
-    state = {
-        error: null,
-        errorInfo: null
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            errorInfo: null
+        };
+    }
+
     componentDidCatch(error, errorInfo) {
         this.setState({ error: error, errorInfo: errorInfo });
     }
 
     render() {
         if (this.state.errorInfo) {
-            return <h1>Oops something went wrong</h1>;
+            return (
+                <div>
+                    <h1>Oops something went wrong</h1>
+                    <details style={{ whiteSpace: "pre-wrap" }}>
+                        {this.state.error && this.state.error.toString()}
+                        <br />
+                        {this.state.errorInfo.componentStack}
+                    </details>
+                </div>
+            );
         }
         return this.props.children;
     }
 }
 
 class Counter extends Component {
-    state = {
-        count: 0,
-        hasError: false
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            count: 0
+        };
+    }
 
     handleClick = () => {
         this.setState({
@@ -39,23 +54,19 @@ class Counter extends Component {
             <div className="App">
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
-                    <p>{this.state.count}</p>
-                    <button className="app-button" onClick={this.handleClick}>
-                        Click 5 times to generate an Error
-                    </button>
                 </header>
+                <button className="app-button" onClick={this.handleClick}>
+                    Click 5 times to generate an Error
+                </button>
             </div>
         );
     }
 }
 function App() {
     return (
-        <div>
-            <ErrorWrap>
-                <p>Sample Error boundary</p>
-                <Counter />
-            </ErrorWrap>
-        </div>
+        <ErrorWrap>
+            <Counter />
+        </ErrorWrap>
     );
 }
 export default App;
